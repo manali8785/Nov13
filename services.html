@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="base.css"/>
+    <title>Demo</title>
+    <script src="bower_components/angular/angular.js"></script>
+    <script>
+        angular.module('myApp', []).controller('MyController', function ($scope, $http) {
+            $scope.message = 'Hello';
+            // make an ajax call to a service, get the data and show it on the front end ...
+            var url = 'https://api.github.com/search/repositories?q=nodejs';
+            $http.get(url).then(function (config) {
+                // resolved - fn is invoked if the promise was resolved or successfully completed its intended action
+                console.log(config);
+                var header_value = config.headers('Link');
+                console.log(header_value);
+                console.log(config.data.items);
+                $scope.repos = config.data.items;
+            }, function () {
+                // rejected
+            });
+        });
+    </script>
+    <style>
+        ul {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            list-style-type: none;
+        }
+        li {
+            padding: 0.5em;
+            border: 1px solid gray;
+            border-radius: 0.5em;
+            margin: 0.5em;
+        }
+        li > img {
+            width: 10em;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<div ng-controller="MyController">
+    {{message}}
+
+
+    <ul>
+        <li ng-repeat="repo in repos">
+            {{repo.full_name}}
+            <img ng-src="{{repo.owner.avatar_url}}" alt="{{repo.owner.login}}"/>
+        </li>
+    </ul>
+
+</div>
+</body>
+</html>
